@@ -21,23 +21,23 @@ import {
   import { fireEvent } from "./";
   import { clamp } from "./";
   import { svgArc } from "./";
-  
+
   const MAX_ANGLE = 270;
   const ROTATE_ANGLE = 360 - MAX_ANGLE / 2 - 90;
   const RADIUS = 145;
-  
+
   function xy2polar(x: number, y: number) {
     const r = Math.sqrt(x * x + y * y);
     const phi = Math.atan2(y, x);
     return [r, phi];
   }
-  
+
   function rad2deg(rad: number) {
     return (rad / (2 * Math.PI)) * 360;
   }
-  
+
   type ActiveSlider = "low" | "high" | "value";
-  
+
   declare global {
     interface HASSDomEvents {
       "value-changing": { value: unknown };
@@ -47,7 +47,7 @@ import {
       "high-changed": { value: unknown };
     }
   }
-  
+
   const A11Y_KEY_CODES = new Set([
     "ArrowRight",
     "ArrowUp",
@@ -58,82 +58,82 @@ import {
     "Home",
     "End",
   ]);
-  
+
   export type ControlCircularSliderMode = "start" | "end" | "full";
-  
+
   @customElement("bt-generic-ha-control-circular-slider")
   export class BTHaControlCircularSlider extends LitElement {
     @property({ type: Boolean, reflect: true })
     public disabled = false;
-  
+
     @property({ type: Boolean })
     public dual?: boolean;
-  
+
     @property({ type: String })
     public mode?: ControlCircularSliderMode;
-  
+
     @property({ type: Boolean })
     public inactive?: boolean;
-  
+
     @property({ type: String })
     public label?: string;
-  
+
     @property({ type: String, attribute: "low-label" })
     public lowLabel?: string;
-  
+
     @property({ type: String, attribute: "high-label" })
     public highLabel?: string;
-  
+
     @property({ type: Number })
     public value?: number;
-  
+
     @property({ type: Number })
     public low?: number;
-  
+
     @property({ type: Number })
     public high?: number;
-  
+
     @property({ type: Number })
     public current?: number;
-  
+
     @property({ type: Number })
     public step = 1;
-  
+
     @property({ type: Number })
     public min = 0;
-  
+
     @property({ type: Number })
     public max = 100;
-  
+
     @state()
     public _localValue?: number = this.value;
-  
+
     @state()
     public _localLow?: number = this.low;
-  
+
     @state()
     public _localHigh?: number = this.high;
-  
+
     @state()
     public _activeSlider?: ActiveSlider;
-  
+
     @state()
     public _lastSlider?: ActiveSlider;
-  
+
     private _valueToPercentage(value: number) {
       return (
         (clamp(value, this.min, this.max) - this.min) / (this.max - this.min)
       );
     }
-  
+
     private _percentageToValue(value: number) {
       return (this.max - this.min) * value + this.min;
     }
-  
+
     private _steppedValue(value: number) {
       return Math.round(value / this.step) * this.step;
     }
-  
+
     private _boundedValue(value: number) {
       const min =
         this._activeSlider === "high"
@@ -145,12 +145,12 @@ import {
           : this.max;
       return Math.min(Math.max(value, min), max);
     }
-  
+
     protected firstUpdated(changedProps: PropertyValues): void {
       super.firstUpdated(changedProps);
       this._setupListeners();
     }
-  
+
     protected updated(changedProps: PropertyValues): void {
       super.updated(changedProps);
       if (!this._activeSlider) {
@@ -165,38 +165,38 @@ import {
         }
       }
     }
-  
+
     connectedCallback(): void {
       super.connectedCallback();
       this._setupListeners();
     }
-  
+
     disconnectedCallback(): void {
       super.disconnectedCallback();
     }
-  
+
     private _mc?: HammerManager;
-  
+
     private _getPercentageFromEvent = (e: HammerInput) => {
       const bound = this._slider.getBoundingClientRect();
       const x = (2 * (e.center.x - bound.left - bound.width / 2)) / bound.width;
       const y = (2 * (e.center.y - bound.top - bound.height / 2)) / bound.height;
-  
+
       const [, phi] = xy2polar(x, y);
-  
+
       const offset = (360 - MAX_ANGLE) / 2;
-  
+
       const angle = ((rad2deg(phi) + offset - ROTATE_ANGLE + 360) % 360) - offset;
-  
+
       return Math.max(Math.min(angle / MAX_ANGLE, 1), 0);
     };
-  
+
     @query("#slider")
     private _slider;
-  
+
     @query("#interaction")
     private _interaction;
-  
+
     private _findActiveSlider(value: number): ActiveSlider {
       if (!this.dual) return "value";
       const low = Math.max(this._localLow ?? this.min, this.min);
@@ -211,7 +211,7 @@ import {
       const highDistance = Math.abs(value - high);
       return lowDistance <= highDistance ? "low" : "high";
     }
-  
+
     private _setActiveValue(value: number) {
       switch (this._activeSlider) {
         case "high":
@@ -225,7 +225,7 @@ import {
           break;
       }
     }
-  
+
     private _getActiveValue(): number | undefined {
       switch (this._activeSlider) {
         case "high":
@@ -237,7 +237,7 @@ import {
       }
       return undefined;
     }
-  
+
     _setupListeners() {
       if (this._interaction && !this._mc) {
         this._mc = new Manager(this._interaction, {
@@ -250,9 +250,9 @@ import {
             threshold: 0,
           })
         );
-  
+
         this._mc.add(new Tap({ event: "singletap" }));
-  
+
         this._mc.on("pan", (e) => {
           e.srcEvent.stopPropagation();
           e.srcEvent.preventDefault();
@@ -315,11 +315,11 @@ import {
         });
       }
     }
-  
+
     private get _tenPercentStep() {
       return Math.max(this.step, (this.max - this.min) / 10);
     }
-  
+
     private _handleKeyDown(e: KeyboardEvent) {
       if (!A11Y_KEY_CODES.has(e.code)) return;
       e.preventDefault();
@@ -329,9 +329,9 @@ import {
       this._activeSlider =
         this._lastSlider ?? ((e.currentTarget as any).id as ActiveSlider);
       this._lastSlider = undefined;
-  
+
       const value = this._getActiveValue();
-  
+
       switch (e.code) {
         case "ArrowRight":
         case "ArrowUp":
@@ -371,7 +371,7 @@ import {
       });
       this._activeSlider = undefined;
     }
-  
+
     _handleKeyUp(e: KeyboardEvent) {
       if (!A11Y_KEY_CODES.has(e.code)) return;
       this._activeSlider = (e.currentTarget as any).id as ActiveSlider;
@@ -384,38 +384,38 @@ import {
       });
       this._activeSlider = undefined;
     }
-  
+
     destroyListeners() {
       if (this._mc) {
         this._mc.destroy();
         this._mc = undefined;
       }
     }
-  
+
     private _strokeCircleDashArc(value: number): [string, string] {
       return this._strokeDashArc(value, value);
     }
-  
+
     private _strokeDashArc(from: number, to: number): [string, string] {
       const start = this._valueToPercentage(from);
       const end = this._valueToPercentage(to);
-  
+
       const track = (RADIUS * 2 * Math.PI * MAX_ANGLE) / 360;
       const arc = Math.max((end - start) * track, 0);
       const arcOffset = start * track - 0.5;
-  
+
       const strokeDasharray = `${arc} ${track - arc}`;
       const strokeDashOffset = `-${arcOffset}`;
       return [strokeDasharray, strokeDashOffset];
     }
-  
+
     protected renderArc(
       id: string,
       value: number | undefined,
       mode: ControlCircularSliderMode
     ) {
       if (this.disabled) return nothing;
-  
+
       const path = svgArc({
         x: 0,
         y: 0,
@@ -423,34 +423,34 @@ import {
         end: MAX_ANGLE,
         r: RADIUS,
       });
-  
+
       const limit = mode === "end" ? this.max : this.min;
-  
+
       const current = this.current ?? limit;
       const target = value ?? limit;
-  
+
       const showActive =
         mode === "end"
           ? target <= current
           : mode === "start"
           ? current <= target
           : false;
-  
+
       const activeArc = showActive
         ? mode === "end"
           ? this._strokeDashArc(target, current)
           : this._strokeDashArc(current, target)
         : this._strokeCircleDashArc(target);
-  
+
       const coloredArc =
         mode === "full"
           ? this._strokeDashArc(this.min, this.max)
           : mode === "end"
           ? this._strokeDashArc(target, limit)
           : this._strokeDashArc(limit, target);
-  
+
       const targetCircle = this._strokeCircleDashArc(target);
-  
+
       const currentCircle =
         this.current != null &&
         this.current <= this.max &&
@@ -458,7 +458,7 @@ import {
         (showActive || this.mode === "full")
           ? this._strokeCircleDashArc(this.current)
           : undefined;
-  
+
       return svg`
         <g class=${classMap({ inactive: Boolean(this.inactive) })}>
           <path
@@ -520,7 +520,7 @@ import {
         </g>
       `;
     }
-  
+
     protected render(): TemplateResult {
       const trackPath = svgArc({
         x: 0,
@@ -529,15 +529,15 @@ import {
         end: MAX_ANGLE,
         r: RADIUS,
       });
-  
+
       const lowValue = this.dual ? this._localLow : this._localValue;
       const highValue = this._localHigh;
       const current = this.current;
-  
+
       const currentStroke = current
         ? this._strokeCircleDashArc(current)
         : undefined;
-  
+
       return html`
         <svg
           id="slider"
@@ -584,7 +584,7 @@ import {
         <slot></slot>
       `;
     }
-  
+
     static get styles(): CSSResultGroup {
       return css`
         :host {
@@ -629,7 +629,7 @@ import {
         :host([disabled]) #interaction {
           cursor: initial;
         }
-  
+
         .background {
           fill: none;
           stroke: var(--control-circular-slider-background);
@@ -640,7 +640,7 @@ import {
           stroke-linecap: round;
           stroke-width: 24px;
         }
-  
+
         .arc {
           fill: none;
           stroke-linecap: round;
@@ -652,7 +652,7 @@ import {
             stroke 180ms ease-in-out,
             opacity 180ms ease-in-out;
         }
-  
+
         .target {
           fill: none;
           stroke-linecap: round;
@@ -665,7 +665,7 @@ import {
             stroke 180ms ease-in-out,
             opacity 180ms ease-in-out;
         }
-  
+
         .target-border {
           fill: none;
           stroke-linecap: round;
@@ -680,7 +680,7 @@ import {
         }
 
 
-  
+
         .current {
           fill: none;
           stroke-linecap: round;
@@ -694,11 +694,11 @@ import {
             stroke 180ms ease-in-out,
             opacity 180ms ease-in-out;
         }
-  
+
         .arc-current {
           stroke: var(--clear-background-color);
         }
-  
+
         .arc-clear {
           stroke: var(--clear-background-color);
         }
@@ -711,7 +711,7 @@ import {
         .arc-active:focus-visible {
           stroke-width: 28px;
         }
-  
+
         .pressed .arc,
         .pressed .target,
         .pressed .target-border,
@@ -721,27 +721,27 @@ import {
             stroke 180ms ease-in-out,
             opacity 180ms ease-in-out;
         }
-  
+
         .inactive .arc,
         .inactive .arc-current {
           opacity: 0;
         }
-  
+
         .value {
           stroke: var(--control-circular-slider-color);
         }
-  
+
         .low {
           stroke: var(--control-circular-slider-low-color);
         }
-  
+
         .high {
           stroke: var(--state-climate-cool-color);
         }
       `;
     }
   }
-  
+
   declare global {
     interface HTMLElementTagNameMap {
       "bt-generic-ha-control-circular-slider": BTHaControlCircularSlider;
