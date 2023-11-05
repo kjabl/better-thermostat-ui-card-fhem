@@ -295,14 +295,14 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         align-items: center;
       }
 
-      bt-ha-outlined-icon-button {
+      bt-generic-ha-outlined-icon-button {
         border: 1px solid var(--secondary-text-color);
         border-radius: 100%;
         padding: 0.5em;
         cursor: pointer;
       }
 
-      .content.battery, bt-ha-control-circular-slider.battery {
+      .content.battery, bt-generic-ha-control-circular-slider.battery {
         opacity: 0.5;
         filter: blur(5px);
         pointer-events: none;
@@ -359,7 +359,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
           width: 100%;
           height: 100%;
       }
-      bt-ha-control-circular-slider {
+      bt-generic-ha-control-circular-slider {
         --primary-color: var(--mode-color);
       }
 
@@ -853,7 +853,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         (this.value.low != null &&
         this.value.high != null &&
         this.stateObj.state !== UNAVAILABLE) ? html`
-        <bt-ha-control-circular-slider
+        <bt-generic-ha-control-circular-slider
           class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${this.summer ? 'summer': ''} "
           .inactive=${this.window}
           dual
@@ -869,7 +869,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
           @high-changing=${this._highChanging}
         >
         ` : html`
-        <bt-ha-control-circular-slider
+        <bt-generic-ha-control-circular-slider
           class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${this.summer ? 'summer': ''} "
           .inactive=${this.window}
           .mode="start"
@@ -958,7 +958,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
               </g>
                 </svg>
             </div>
-            </bt-ha-control-circular-slider>
+            </bt-generic-ha-control-circular-slider>
             <div id="modes">
               ${this?._hasSummer ? svg`
                 ${(this?._config?.disable_heat || !this.modes.includes('heat')) ? html `` : this._renderIcon("heat", this.mode)}
@@ -983,22 +983,22 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
             ${this?._config?.disable_buttons ? html`` : html`
             <div id="bt-control-buttons">
                 <div class="button">
-                  <bt-ha-outlined-icon-button
+                  <bt-generic-ha-outlined-icon-button
                     .target=${this.target}
                     .step=${-this.step}
                     @click=${this._handleButton}
                   >
                     <ha-svg-icon .path=${mdiMinus}></ha-svg-icon>
-                  </bt-ha-outlined-icon-button>
+                  </bt-generic-ha-outlined-icon-button>
                 </div>
                 <div class="button">
-                  <bt-ha-outlined-icon-button
+                  <bt-generic-ha-outlined-icon-button
                     .target=${this.target}
                     .step=${this.step}
                     @click=${this._handleButton}
                   >
                   <ha-svg-icon .path=${mdiPlus}></ha-svg-icon>
-                </bt-ha-outlined-icon-button>
+                </bt-generic-ha-outlined-icon-button>
                 </div>
             </div>
             `}
