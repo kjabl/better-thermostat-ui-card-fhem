@@ -1,3 +1,8 @@
+
+# Angepasst
+Angepasst, um Visualisierung auch für über FHEM eingebundene MAX Thermostate nutzen zu können. Sollte für alle Generic Climate Geräte funktionieren.
+
+
 [![Version - 2.2.0](https://img.shields.io/badge/Version-2.2.0-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
 [![Discord](https://img.shields.io/discord/925725316540923914.svg?style=for-the-badge)](https://discord.gg/9BUegWTG3K)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
