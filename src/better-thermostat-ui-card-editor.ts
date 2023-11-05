@@ -59,7 +59,7 @@ const computeSchema = memoizeOne(
     ]
 );
 
-@customElement("better-thermostat-ui-card-editor")
+@customElement("better-generic-thermostat-ui-card-editor")
 export class ClimateCardEditor extends LitElement implements LovelaceCardEditor {
     @state() private _config?: ClimateCardConfig;
     @property({ attribute: false }) public hass!: HomeAssistant;

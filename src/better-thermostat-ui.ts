@@ -103,12 +103,12 @@ console.info(
 );
 
 registerCustomCard({
-  type: "better-thermostat-ui-card",
-  name: "Better Thermostat Climate Card",
+  type: "better-generic-thermostat-ui-card",
+  name: "Better Generic Thermostat Climate Card",
   description: "Card for climate entity",
 });
 
-@customElement('better-thermostat-ui-card')
+@customElement('better-generic-thermostat-ui-card')
 export class BetterThermostatUi extends LitElement implements LovelaceCard {
   constructor() {
     super();
@@ -124,7 +124,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   }
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./better-thermostat-ui-card-editor");
-    return document.createElement("better-thermostat-ui-card-editor") as LovelaceCardEditor;
+    return document.createElement("better-generic-thermostat-ui-card-editor") as LovelaceCardEditor;
   }
 
   public static async getStubConfig(hass: HomeAssistant): Promise<any> {
@@ -132,7 +132,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       const climates = entities.filter((e) => ["climate"].includes(e.split(".")[0]));
       const bt_climate:any = climates.filter((e) => hass.states[e].attributes?.call_for_heat);
       return {
-          type: "custom:better-thermostat-ui-card",
+          type: "custom:better-generic-thermostat-ui-card",
           entity: bt_climate[0] || climates[0]
       };
   }
