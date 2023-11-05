@@ -30,6 +30,7 @@ export type ClimateCardConfig = LovelaceCardConfig &
 {
         window_entity?: string;
         humidity_entity?: string;
+        external_temp_entity?: string;
         disable_window?: boolean;
         disable_summer?: boolean;
         disable_eco?: boolean;
@@ -48,6 +49,7 @@ export const climateCardConfigStruct = assign(
     object({
         window_entity: optional(string()),
         humidity_entity: optional(string()),
+        external_temp_entity: optional(string()),
         disable_window: optional(boolean()),
         disable_summer: optional(boolean()),
         disable_eco: optional(boolean()),

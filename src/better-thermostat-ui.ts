@@ -57,6 +57,7 @@ import {
 import { ClimateCardConfig } from './climate-card-config';
 import './ha/ha-control-circular-slider';
 import { HassEntityBase } from 'home-assistant-js-websocket';
+import { unknown } from 'superstruct';
 
 const UNAVAILABLE = "unavailable";
 const UNKNOWN = "unknown";
@@ -632,10 +633,12 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
     const entity_id: any = this._config.entity;
     const window_id: any = this._config.window_entity;
     const humidity_id: any = this._config.humidity_entity;
+    const external_temp_id: any = this._config.external_temp_entity;
 
     const stateObj = this.hass.states[entity_id] as ClimateEntity;
     const window_state = this.hass.states[window_id] as HassEntityBase;
     const humidity_state = this.hass.states[humidity_id] as HassEntityBase;
+    const external_temp_state = this.hass.states[external_temp_id] as HassEntityBase;
 
       if (!stateObj) {
           return;
@@ -670,8 +673,12 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         if (attributes.max_temp) {
           this.max = attributes.max_temp;
         }
-        if (attributes.current_temperature) {
-          this.current = attributes.current_temperature;
+        if (attributes.current_temperature || external_temp_id !== undefined) {
+          if (external_temp_id !== undefined && external_temp_state.state != "unknown") {
+            this.current = parseFloat(external_temp_state.state);
+          } else {
+            this.current = attributes.current_temperature;
+          }
         }
         //if (attributes?.humidity !== undefined) {
         if (humidity_id !== undefined) {
