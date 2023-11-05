@@ -43,6 +43,8 @@ const computeSchema = memoizeOne(
             type: "grid",
             name: "",
             schema: [
+                { name: "window_entity", selector: { entity: { domain: ["binary_sensor"] } } },
+                { name: "humidity_entity", selector: { entity: { domain: ["sensor"] } } },
                 { name: "disable_window", selector: { boolean: {} } },
                 { name: "disable_summer", selector: { boolean: {} } },
                 { name: "disable_eco", selector: { boolean: {} } },
